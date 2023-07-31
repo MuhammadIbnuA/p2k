@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); // Add this line to include the cors middleware
 const dataController = require('./controller/datacontroller');
-
+const userController = require('./controller/usercontroller');
+const isAuthenticated = require('./authmiddleware')
 const app = express();
 
 // Middleware to enable CORS
@@ -22,12 +23,16 @@ mongoose.connect(atlasUri, { useNewUrlParser: true, useUnifiedTopology: true })
   });
 
 // Define API routes
-app.get('/api/data', dataController.getAllData);
+app.get('/api/data', isAuthenticated,dataController.getAllData);
 app.get('/api/data/:nim', dataController.getDataByNim);
-app.post('/api/data', dataController.addData);
+app.post('/api/data', isAuthenticated,dataController.addData);
+// Registration
+app.post("/register", userController.registerUser);
+// Login
+app.post("/login", userController.login);
 
 // Start the server
-const port = 3000;
+const port = 3500;
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
